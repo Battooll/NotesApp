@@ -1,0 +1,44 @@
+<h2 class="mb-4">{{ title }}</h2>
+
+<!-- Add new note -->
+
+<app-note-form (add)="addNote($event)"></app-note-form>
+
+
+<!-- Filter buttons -->
+<div class="btn-group mb-3">
+  <button
+    class="btn btn-outline-primary"
+    [class.active]="filter === 'all'"
+    (click)="filter = 'all'">All</button>
+
+  <button
+    class="btn btn-outline-primary"
+    [class.active]="filter === 'active'"
+    (click)="filter = 'active'">Active</button>
+
+  <button
+    class="btn btn-outline-primary"
+    [class.active]="filter === 'completed'"
+    (click)="filter = 'completed'">Completed</button>
+</div>
+
+<!-- List -->
+<ul class="list-group">
+  <app-note-item
+    *ngFor="let note of filteredNotes; let i = index"
+    [note]="note"
+    [index]="i"
+    [editingIndex]="editingIndex"
+    (delete)="removeNote($event)"
+    (editStart)="startEdit($event)"
+    (save)="saveEdit($event)"
+    
+    (cancel)="cancelEdit()"
+    (toggle)="toggleCompleted($event)">
+  </app-note-item>
+</ul>
+
+<p class="mt-3" *ngIf="notes.length === 0">
+  No notes yet. Add your first note!
+</p>

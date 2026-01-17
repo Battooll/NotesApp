@@ -1,0 +1,13 @@
+<div class="input-group mb-3">
+  <input
+    type="text"
+    class="form-control"
+    placeholder="Enter a note"
+    [(ngModel)]="newNote"
+    (keyup.enter)="submit()"
+  />
+
+  <button class="btn btn-primary" (click)="submit()">
+    Add Note
+  </button>
+</div>

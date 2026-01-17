@@ -1,0 +1,71 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NotesService } from '../services/notes.service';
+import { Note } from '../models/note.model';
+import { NoteItemComponent } from "../note-item/note-item.component";
+import { NoteFormComponent } from "../note-form/note-form.component";
+
+@Component({
+  selector: 'app-notes-page',
+  standalone: true,
+  imports: [CommonModule, FormsModule, NoteItemComponent, NoteFormComponent],
+  templateUrl: './notes-page.component.html',
+  styleUrls: ['./notes-page.component.css']
+})
+export class NotesPageComponent {
+  title = 'My Notes App';
+
+  notes: Note[] = [];
+  newNote = '';
+  editingIndex: number | null = null;
+  filter: 'all' | 'active' | 'completed' = 'all';
+
+  constructor(private notesService: NotesService) {}
+
+  ngOnInit() {
+    this.notes = this.notesService.getNotes();
+  }
+
+  get filteredNotes() {
+    if (this.filter === 'active') return this.notes.filter(n => !n.completed);
+    if (this.filter === 'completed') return this.notes.filter(n => n.completed);
+    return this.notes;
+  }
+
+  // addNote() {
+  //   if (!this.newNote.trim()) return;
+  //   this.notes.push({ text: this.newNote.trim(), completed: false });
+  //   this.newNote = '';
+  //   this.notesService.saveNotes(this.notes);
+  // }
+  addNote(text: string) {
+  this.notes = this.notesService.addNote(text);
+  }
+
+  removeNote(index: number) {
+    this.notes.splice(index, 1);
+    this.notesService.saveNotes(this.notes);
+  }
+
+  startEdit(index: number) {
+    this.editingIndex = index;
+  }
+
+  
+  saveEdit(event: { index: number; text: string }) {
+  const { index, text } = event;
+  this.notes[index].text = text.trim();
+  this.editingIndex = null;
+  this.notesService.saveNotes(this.notes);
+}
+
+  cancelEdit() {
+    this.editingIndex = null;
+  }
+
+  toggleCompleted(index: number) {
+    this.notes[index].completed = !this.notes[index].completed;
+    this.notesService.saveNotes(this.notes);
+  }
+}
