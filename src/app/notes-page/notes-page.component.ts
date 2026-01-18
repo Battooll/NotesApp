@@ -5,11 +5,18 @@ import { NotesService } from '../services/notes.service';
 import { Note } from '../models/note.model';
 import { NoteItemComponent } from "../note-item/note-item.component";
 import { NoteFormComponent } from "../note-form/note-form.component";
+import { FilterBarComponent } from '../filter-bar/filter-bar.component';
 
 @Component({
   selector: 'app-notes-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, NoteItemComponent, NoteFormComponent],
+  imports: [
+  CommonModule,
+  FormsModule,
+  NoteItemComponent,
+  NoteFormComponent,
+  FilterBarComponent
+],
   templateUrl: './notes-page.component.html',
   styleUrls: ['./notes-page.component.css']
 })

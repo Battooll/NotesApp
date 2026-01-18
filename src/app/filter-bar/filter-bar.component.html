@@ -1,0 +1,25 @@
+<div class="btn-group mb-3">
+  <button
+    class="btn"
+    [class.btn-primary]="filter === 'all'"
+    [class.btn-outline-primary]="filter !== 'all'"
+    (click)="setFilter('all')">
+    All
+  </button>
+
+  <button
+    class="btn"
+    [class.btn-primary]="filter === 'active'"
+    [class.btn-outline-primary]="filter !== 'active'"
+    (click)="setFilter('active')">
+    Active
+  </button>
+
+  <button
+    class="btn"
+    [class.btn-primary]="filter === 'completed'"
+    [class.btn-outline-primary]="filter !== 'completed'"
+    (click)="setFilter('completed')">
+    Completed
+  </button>
+</div>

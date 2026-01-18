@@ -6,22 +6,10 @@
 
 
 <!-- Filter buttons -->
-<div class="btn-group mb-3">
-  <button
-    class="btn btn-outline-primary"
-    [class.active]="filter === 'all'"
-    (click)="filter = 'all'">All</button>
-
-  <button
-    class="btn btn-outline-primary"
-    [class.active]="filter === 'active'"
-    (click)="filter = 'active'">Active</button>
-
-  <button
-    class="btn btn-outline-primary"
-    [class.active]="filter === 'completed'"
-    (click)="filter = 'completed'">Completed</button>
-</div>
+<app-filter-bar
+  [filter]="filter"
+  (changeFilter)="filter = $event">
+</app-filter-bar>
 
 <!-- List -->
 <ul class="list-group">
