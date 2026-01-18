@@ -11,11 +11,11 @@ import { FilterBarComponent } from '../filter-bar/filter-bar.component';
   selector: 'app-notes-page',
   standalone: true,
   imports: [
-  CommonModule,
-  FormsModule,
-  NoteItemComponent,
-  NoteFormComponent,
-  FilterBarComponent
+    CommonModule,
+    FormsModule,
+    NoteItemComponent,
+    NoteFormComponent,
+    FilterBarComponent
 ],
   templateUrl: './notes-page.component.html',
   styleUrls: ['./notes-page.component.css']
