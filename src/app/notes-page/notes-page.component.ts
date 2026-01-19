@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { NotesService } from '../services/notes.service';
 import { Note } from '../models/note.model';
-import { NoteItemComponent } from "../note-item/note-item.component";
-import { NoteFormComponent } from "../note-form/note-form.component";
+import { NotesService } from '../services/notes.service';
+import { CommonModule } from '@angular/common';
+import { NoteItemComponent } from '../note-item/note-item.component';
+import { NoteFormComponent } from '../note-form/note-form.component';
 import { FilterBarComponent } from '../filter-bar/filter-bar.component';
 
 @Component({
@@ -12,11 +11,10 @@ import { FilterBarComponent } from '../filter-bar/filter-bar.component';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     NoteItemComponent,
     NoteFormComponent,
     FilterBarComponent
-],
+  ],
   templateUrl: './notes-page.component.html',
   styleUrls: ['./notes-page.component.css']
 })
@@ -24,7 +22,6 @@ export class NotesPageComponent {
   title = 'My Notes App';
 
   notes: Note[] = [];
-  newNote = '';
   editingIndex: number | null = null;
   filter: 'all' | 'active' | 'completed' = 'all';
 
@@ -40,39 +37,28 @@ export class NotesPageComponent {
     return this.notes;
   }
 
-  // addNote() {
-  //   if (!this.newNote.trim()) return;
-  //   this.notes.push({ text: this.newNote.trim(), completed: false });
-  //   this.newNote = '';
-  //   this.notesService.saveNotes(this.notes);
-  // }
   addNote(text: string) {
-  this.notes = this.notesService.addNote(text);
+    this.notes = this.notesService.addNote(text);
   }
 
   removeNote(index: number) {
-    this.notes.splice(index, 1);
-    this.notesService.saveNotes(this.notes);
+    this.notes = this.notesService.deleteNote(index);
   }
 
   startEdit(index: number) {
     this.editingIndex = index;
   }
 
-  
   saveEdit(event: { index: number; text: string }) {
-  const { index, text } = event;
-  this.notes[index].text = text.trim();
-  this.editingIndex = null;
-  this.notesService.saveNotes(this.notes);
-}
+    this.notes = this.notesService.updateNote(event.index, event.text.trim());
+    this.editingIndex = null;
+  }
 
   cancelEdit() {
     this.editingIndex = null;
   }
 
   toggleCompleted(index: number) {
-    this.notes[index].completed = !this.notes[index].completed;
-    this.notesService.saveNotes(this.notes);
+    this.notes = this.notesService.toggleCompleted(index);
   }
 }
