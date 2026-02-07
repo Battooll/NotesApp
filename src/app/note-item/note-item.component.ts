@@ -11,38 +11,39 @@ import { Note } from '../models/note.model';
   styleUrls: ['./note-item.component.css']
 })
 export class NoteItemComponent {
-  @Input() note!: Note;
-  @Input() index!: number;
-  @Input() editingIndex: number | null = null;
+  @Input() note!: Note;  @Input() id!: string;
+  @Input() editingIndex: string | null = null;
+  @Input() editedText = '';
 
-  @Output() delete = new EventEmitter<number>();
-  @Output() editStart = new EventEmitter<number>();
-  @Output() save = new EventEmitter<{ index: number; text: string }>();
+  @Output() delete = new EventEmitter<string>();
+  @Output() editStart = new EventEmitter<string>();
+  @Output() save = new EventEmitter<{ id: string; text: string }>();
   @Output() cancel = new EventEmitter<void>();
-  @Output() toggle = new EventEmitter<number>();
+  @Output() toggle = new EventEmitter<string>();
 
-  editedText = '';
+  @Output() editTextChange = new EventEmitter<string>();
 
-  startEdit() {
-    this.editedText = this.note.text;
-    this.editStart.emit(this.index);
+  onTextChange(value: string) {
+    this.editTextChange.emit(value);
   }
-
-  saveEdit() {
-  if (!this.editedText.trim()) return;
-  this.save.emit({ index: this.index, text: this.editedText });
-}
-
-  toggleCompleted() {
-    this.toggle.emit(this.index);
-  }
-
-  deleteNote() {
-    this.delete.emit(this.index);
-  }
-
   cancelEdit() {
   this.editedText = '';
   this.cancel.emit();
 }
+  startEdit() {
+    this.editStart.emit(this.note.id!);
+  }
+
+  saveEdit() {
+  this.save.emit({ id: this.note.id!, text: this.editedText });
+}
+
+  toggleCompleted() {
+  this.toggle.emit(this.note.id!);
+}
+
+  deleteNote() {
+    if (!this.note.id) return;
+    this.delete.emit(this.note.id);
+  }
 }

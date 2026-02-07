@@ -1,8 +1,7 @@
 <li class="list-group-item d-flex align-items-center justify-content-between">
-
   <!-- View mode -->
-  <div *ngIf="editingIndex !== index" class="d-flex align-items-center gap-2">
-    <input type="checkbox" [checked]="note.completed" (change)="toggle.emit(index)" />
+  <div *ngIf="editingIndex !== note.id" class="d-flex align-items-center gap-2">
+    <input type="checkbox" [checked]="note.completed" (change)="toggleCompleted()" />
 
     <span [class.text-decoration-line-through]="note.completed">
       {{ note.text }}
@@ -10,36 +9,35 @@
   </div>
 
   <!-- Edit mode -->
-  <div *ngIf="editingIndex === index" class="d-flex align-items-center gap-2 flex-grow-1">
-    <input type="text"
-           [(ngModel)]="editedText"
-           class="form-control"
-           (keyup.enter)="save.emit()" />
+  <div *ngIf="editingIndex === note.id" class="d-flex align-items-center gap-2 flex-grow-1">
+    <input
+    type="text"
+    class="form-control"
+    [value]="editedText"
+    (input)="onTextChange($any($event.target).value)"
+    />
   </div>
 
   <div class="btn-group">
     <!-- View mode buttons -->
-    <ng-container *ngIf="editingIndex !== index">
-     <!-- <button class="btn btn-sm btn-warning" (click)="editStart.emit(index)">Edit</button>-->
-      
+    <ng-container *ngIf="editingIndex !== note.id">
       <button 
-  class="btn btn-sm btn-outline-secondary"
-  (click)="startEdit()">
-  Edit
-</button>
-      <button class="btn btn-sm btn-danger" (click)="delete.emit(index)">Delete</button>
+        class="btn btn-sm btn-outline-secondary"
+        (click)="startEdit()">
+        Edit
+      </button>
+      <button 
+        class="btn btn-sm btn-danger" 
+        (click)="deleteNote()">
+        Delete
+      </button>
     </ng-container>
 
 
     <!-- Edit mode buttons -->
-    <ng-container *ngIf="editingIndex === index">
-<button 
-  *ngIf="editingIndex === index"
-  class="btn btn-sm btn-success"
-  (click)="saveEdit()">
-  Save
-</button>
-      <button class="btn btn-sm btn-secondary" (click)="cancel.emit()">Cancel</button>
+    <ng-container *ngIf="editingIndex === note.id">
+      <button class="btn btn-sm btn-success" (click)="saveEdit()">Save</button>
+      <button class="btn btn-sm btn-secondary" (click)="cancelEdit()">Cancel</button>    
     </ng-container>
   </div>
 

@@ -1,0 +1,18 @@
+{
+  "notes": [
+    {
+      "id": "a8a2",
+      "text": "this is an edited note!",
+      "completed": false
+    },
+    {
+      "id": "7ab8",
+      "text": "New note!"
+    },
+    {
+      "id": "0db4",
+      "text": "Completed note!",
+      "completed": true
+    }
+  ]
+}

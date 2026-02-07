@@ -1,47 +1,32 @@
 import { Injectable } from '@angular/core';
 import { Note } from '../models/note.model';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotesService {
-  private storageKey = 'notes';
+  private apiUrl = 'http://localhost:3000/notes';
 
-  getNotes(): Note[] {
-    const saved = localStorage.getItem(this.storageKey);
-    return saved ? JSON.parse(saved) : [];
+  constructor(private http: HttpClient) {}
+  
+  getNotes(): Observable<Note[]> {
+    return this.http.get<Note[]>(this.apiUrl);
   }
 
-  saveNotes(notes: Note[]) {
-    localStorage.setItem(this.storageKey, JSON.stringify(notes));
+  addNote(note: Partial<Note>): Observable<Note> {
+    return this.http.post<Note>(this.apiUrl, note);
   }
 
-  addNote(text: string): Note[] {
-    const notes = this.getNotes();
-    notes.push({ text, completed: false });
-    this.saveNotes(notes);
-    return notes;
+  updateNote(id: string, patch: Partial<Note>): Observable<Note> {
+    return this.http.patch<Note>(`${this.apiUrl}/${id}`, patch);
   }
-
-  updateNote(index: number, text: string): Note[] {
-    const notes = this.getNotes();
-    notes[index].text = text;
-    this.saveNotes(notes);
-    return notes;
-  }
-
-  deleteNote(index: number): Note[] {
-    const notes = this.getNotes();
-    notes.splice(index, 1);
-    this.saveNotes(notes);
-    return notes;
-  }
-
-  toggleCompleted(index: number): Note[] {
-    const notes = this.getNotes();
-    notes[index].completed = !notes[index].completed;
-    this.saveNotes(notes);
-    return notes;
+  deleteNote(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
+
+
+  
