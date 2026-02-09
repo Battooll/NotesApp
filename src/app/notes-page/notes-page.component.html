@@ -1,31 +1,27 @@
-<h2 class="mb-4">{{ title }}</h2>
-
-<!-- Add new note -->
+<h2 class="mb-4">My Notes App</h2>
 
 <app-note-form (add)="addNote($event)"></app-note-form>
-
-
-<!-- Filter buttons -->
 <app-filter-bar
   [filter]="filter"
-  (changeFilter)="filter = $event">
+  (changeFilter)="setFilter($event)">
 </app-filter-bar>
 
-<!-- List -->
 <ul class="list-group">
-  
+
 <app-note-item
   *ngFor="let note of filteredNotes"
   [note]="note"
-  [editingIndex]="editingId"
-  [editedText]="editedText"
-  (editTextChange)="editedText = $event"
+  [editingId]="editingId"
+  [editingText]="editingText"
+
   (editStart)="startEdit($event)"
+  (editTextChange)="editingText = $event"
   (save)="saveEdit($event)"
   (cancel)="cancelEdit()"
-  (delete)="removeNote($event)"
-  (toggle)="toggleCompleted($event)">
+  (delete)="deleteNote($event)"
+  (toggle)="toggle($event)">
 </app-note-item>
+
 </ul>
 
 <p class="mt-3" *ngIf="notes.length === 0">

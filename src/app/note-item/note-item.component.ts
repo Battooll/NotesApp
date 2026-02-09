@@ -1,49 +1,45 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Note } from '../models/note.model';
 
 @Component({
   selector: 'app-note-item',
   standalone: true,
-  imports: [CommonModule, NgIf, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './note-item.component.html',
   styleUrls: ['./note-item.component.css']
 })
 export class NoteItemComponent {
-  @Input() note!: Note;  @Input() id!: string;
-  @Input() editingIndex: string | null = null;
-  @Input() editedText = '';
 
-  @Output() delete = new EventEmitter<string>();
-  @Output() editStart = new EventEmitter<string>();
-  @Output() save = new EventEmitter<{ id: string; text: string }>();
-  @Output() cancel = new EventEmitter<void>();
-  @Output() toggle = new EventEmitter<string>();
+  @Input() note!: Note;
+  @Input() editingId!: string | null;
+  @Input() editingText!: string;
 
+  @Output() editStart = new EventEmitter<Note>();
   @Output() editTextChange = new EventEmitter<string>();
+  @Output() save = new EventEmitter<Note>();
+  @Output() cancel = new EventEmitter<void>();
+  @Output() delete = new EventEmitter<string>();
+  @Output() toggle = new EventEmitter<Note>();
+
+  startEdit() {
+    this.editStart.emit(this.note);
+  }
 
   onTextChange(value: string) {
     this.editTextChange.emit(value);
   }
-  cancelEdit() {
-  this.editedText = '';
-  this.cancel.emit();
-}
-  startEdit() {
-    this.editStart.emit(this.note.id!);
-  }
 
   saveEdit() {
-  this.save.emit({ id: this.note.id!, text: this.editedText });
-}
-
-  toggleCompleted() {
-  this.toggle.emit(this.note.id!);
-}
+    this.save.emit(this.note);
+  }
 
   deleteNote() {
-    if (!this.note.id) return;
     this.delete.emit(this.note.id);
+  }
+
+  toggleCompleted() {
+    this.toggle.emit(this.note);
   }
 }

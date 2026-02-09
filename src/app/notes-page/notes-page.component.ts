@@ -1,92 +1,82 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+import { NotesStore } from '../store/notes.store';
+import { Note } from '../models/note.model';
+
 import { NoteItemComponent } from '../note-item/note-item.component';
 import { NoteFormComponent } from '../note-form/note-form.component';
-import { Note } from '../models/note.model';
-import { NotesService } from '../services/notes.service';
 import { FilterBarComponent } from "../../../dist/src/app/filter-bar/filter-bar.component";
 
 @Component({
   selector: 'app-notes-page',
   standalone: true,
-  imports: [CommonModule, NoteItemComponent, NoteFormComponent, FilterBarComponent],
+  imports: [CommonModule, FormsModule, NoteItemComponent, NoteFormComponent, FilterBarComponent],
   templateUrl: './notes-page.component.html',
   styleUrls: ['./notes-page.component.css']
 })
 export class NotesPageComponent implements OnInit {
-    title = 'My Notes App';
 
   notes: Note[] = [];
   filter: 'all' | 'active' | 'completed' = 'all';
 
   editingId: string | null = null;
-  editedText = '';
+  editingText = '';
 
-  constructor(private noteService: NotesService) {}
+  constructor(private store: NotesStore) {}
 
   ngOnInit(): void {
-    this.loadNotes();
+    this.store.notes$.subscribe(notes => {
+      this.notes = notes;
+    });
+
+    this.store.loadNotes();
+  }
+  get filteredNotes(): Note[] {
+
+    if (this.filter === 'active') {
+      return this.notes.filter(n => !n.completed);
+    }
+
+    if (this.filter === 'completed') {
+      return this.notes.filter(n => n.completed);
+    }
+
+    return this.notes;
+  }
+  setFilter(value: 'all' | 'active' | 'completed') {
+  this.filter = value;
   }
 
-  loadNotes(): void {
-    this.noteService.getNotes().subscribe(notes => {
-      this.notes = notes;
-      this.filteredNotes;
-    });
-  }
 
   addNote(text: string): void {
-    this.noteService.addNote({ text }).subscribe(() => this.loadNotes());
+    if (!text.trim()) return;
+    this.store.addNote(text);
   }
 
-  removeNote(id: string): void {
-    this.noteService.deleteNote(id).subscribe(() => this.loadNotes());
+  deleteNote(id: string): void {
+    this.store.deleteNote(id);
   }
 
-  toggleCompleted(id: string): void {
-    const note = this.notes.find(n => n.id === id);
-    if (!note) return;
-
-    this.noteService
-      .updateNote(id, { completed: !note.completed })
-      .subscribe(() => this.loadNotes());
+  toggle(note: Note): void {
+    this.store.toggleCompleted(note);
   }
 
-  
-startEdit(id: string): void {
-  const note = this.notes.find(n => n.id === id);
-  if (!note) return;
+  startEdit(note: Note): void {
+    this.editingId = note.id;
+    this.editingText = note.text;
+  }
 
-  this.editingId = id;
-  this.editedText = note.text;
-}
+  saveEdit(note: Note): void {
+    if (!this.editingText.trim()) return;
 
-  saveEdit(data: { id: string; text: string }): void {
-    this.noteService.updateNote(data.id, { text: data.text })
-      .subscribe(() => {
-        this.editingId = null;
-        this.loadNotes();
-      });
+    this.store.updateText(note, this.editingText);
+    this.cancelEdit();
   }
 
   cancelEdit(): void {
     this.editingId = null;
+    this.editingText = '';
   }
-
-
-  get filteredNotes(): Note[] {
-  if (this.filter === 'active') {
-    return this.notes.filter(n => !n.completed);
-  }
-
-  if (this.filter === 'completed') {
-    return this.notes.filter(n => n.completed);
-  }
-
-  return this.notes;
-}
-setFilter(filter: 'all' | 'active' | 'completed') {
-  this.filter = filter;
-}
-
 }
